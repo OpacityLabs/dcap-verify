@@ -1,0 +1,13 @@
+{
+  "current_time_unix": 1784171553,
+  "verdict": "accept",
+  "notes": "FAMILY E: pck_crl_issuer_chain with the Root CA appended twice. EXPECTED agree-accept (duplicate root tolerated in the PCK-CRL slot).",
+  "tcb_standing": {
+    "configuration-and-sw-hardening-needed": {
+      "advisory_ids": [
+        "INTEL-SA-00289",
+        "INTEL-SA-00615"
+      ]
+    }
+  }
+}

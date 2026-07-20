@@ -1,0 +1,11 @@
+target/
+mutants.out*
+
+dcap-differ/reports/
+
+# recombination differential corpus (regenerable via dcap-differ/tools/build_recombination_corpus.py)
+dcap-differ/corpus/
+
+# python bytecode
+__pycache__/
+*.pyc

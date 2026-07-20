@@ -1,0 +1,6 @@
+{
+  "current_time_unix": 1784171553,
+  "verdict": "reject",
+  "notes": "FAMILY D: genuine QVE enclaveIdentity spliced into the qe_identity slot (id=QVE). EXPECTED agree-reject (dcap qe-identity-mismatch id!=QE); a dcap ACCEPT is DANGEROUS.",
+  "category": "qe-identity-mismatch"
+}

@@ -1,0 +1,5 @@
+{
+  "current_time_unix": 1991947853,
+  "verdict": "boundary",
+  "notes": "FAMILY F: unmodified prod-1 collateral at boundary 'cert-intel-sgx-pck-certificate-notafter' (2033-02-13T22:50:54Z) minus1 -> t=2033-02-13T22:50:53Z. Probes <= vs < off-by-one between dcap window checks and QVL expiry model."
+}

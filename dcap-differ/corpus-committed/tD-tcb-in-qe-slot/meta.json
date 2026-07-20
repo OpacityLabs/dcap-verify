@@ -1,0 +1,6 @@
+{
+  "current_time_unix": 1784171553,
+  "verdict": "reject",
+  "notes": "FAMILY D: base tcbInfo envelope placed in the qe_identity slot. EXPECTED agree-reject (dcap collateral-parse: missing enclaveIdentity).",
+  "category": "collateral-parse-error"
+}

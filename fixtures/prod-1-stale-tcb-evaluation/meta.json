@@ -1,0 +1,9 @@
+{
+  "case": "prod-1-stale-tcb-evaluation",
+  "current_time_unix": 1783549518,
+  "expected_mrenclave_hex": "a4d3f05eca05be04897074c5975c24cdfee969f8580a8a5380c69eb248f256f5",
+  "verdict": "reject",
+  "category": "tcb-info-stale",
+  "notes": "Genuine round-19 collateral verified with a caller floor of 20: an old-but-unexpired TCB evaluation round must reject as stale.",
+  "min_tcb_evaluation_data_number": 20
+}

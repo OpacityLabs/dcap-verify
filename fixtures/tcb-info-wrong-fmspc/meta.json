@@ -1,0 +1,8 @@
+{
+  "case": "tcb-info-wrong-fmspc",
+  "current_time_unix": 1783697569,
+  "expected_mrenclave_hex": "a4d3f05eca05be04897074c5975c24cdfee969f8580a8a5380c69eb248f256f5",
+  "verdict": "reject",
+  "category": "tcb-level-unsupported",
+  "notes": "prod-1 with its signed tcbInfo replaced byte-verbatim by the genuine Intel-signed tcbInfo for foreign FMSPC 00906ED50000, fetched from PCS v4 at capture. Intel's signature over the document verifies; the fmspc gate must reject it. Time pinned at capture so the fetched document's own issueDate/nextUpdate window is satisfied."
+}

@@ -1,0 +1,9 @@
+{
+  "case": "prod-1-stale-qe-evaluation",
+  "current_time_unix": 1783700682,
+  "expected_mrenclave_hex": "a4d3f05eca05be04897074c5975c24cdfee969f8580a8a5380c69eb248f256f5",
+  "verdict": "reject",
+  "category": "qe-identity-stale",
+  "min_tcb_evaluation_data_number": 20,
+  "notes": "prod-1 with its signed tcbInfo replaced byte-verbatim by the genuine Intel-signed EARLY-track tcbInfo (round 21) for the same FMSPC, fetched from PCS v4 at capture. With the floor at 20, the round-21 tcbInfo passes and the round-19 qeIdentity trips \u2014 pinning the QE-identity leg of the evaluation-round check end-to-end."
+}

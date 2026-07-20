@@ -1,0 +1,15 @@
+{
+  "case": "prod-1",
+  "current_time_unix": 1783549518,
+  "expected_mrenclave_hex": "a4d3f05eca05be04897074c5975c24cdfee969f8580a8a5380c69eb248f256f5",
+  "verdict": "accept",
+  "tcb_standing": {
+    "configuration-and-sw-hardening-needed": {
+      "advisory_ids": [
+        "INTEL-SA-00289",
+        "INTEL-SA-00615"
+      ]
+    }
+  },
+  "notes": "Capture of a production (non-debug) SGX enclave, with FMSPC 00a067110000 collateral fetched from a PCCS at capture time. The accept ground truth. Base for the prod-derived cases."
+}

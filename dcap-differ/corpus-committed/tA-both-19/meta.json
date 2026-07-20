@@ -1,0 +1,13 @@
+{
+  "current_time_unix": 1784171553,
+  "verdict": "accept",
+  "notes": "FAMILY A: both tcbInfo and qe_identity fresh eval=19 (matched); time=max(issueDate)+1h=2026-07-16T03:12:33Z; live proc+root CRL. EXPECTED agree-accept.",
+  "tcb_standing": {
+    "configuration-and-sw-hardening-needed": {
+      "advisory_ids": [
+        "INTEL-SA-00289",
+        "INTEL-SA-00615"
+      ]
+    }
+  }
+}

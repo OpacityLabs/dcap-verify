@@ -1,0 +1,123 @@
+name: CI
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v6
+      - uses: jdx/mise-action@v4
+        with:
+          experimental: true
+          version: 2026.6.13
+      - uses: Swatinem/rust-cache@v2
+      # dcap-differ and dcap-verify/fuzz are workspace-excluded, so --all
+      # misses them; fmt needs no deps, so check them here. Their clippy runs
+      # where their deps exist (differ job; fuzz builds only under cargo-fuzz).
+      - name: Format
+        run: |
+          cargo fmt --all -- --check
+          cargo fmt --manifest-path dcap-differ/Cargo.toml -- --check
+          cargo fmt --manifest-path dcap-verify/fuzz/Cargo.toml -- --check
+      - name: Clippy
+        run: mise lint
+      - name: Tests
+        run: mise test
+
+  differ:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v6
+      # Host-side (QvE-less) verification: only the QVL shared library and the
+      # DCAP headers are needed, no SGX hardware. libclang is for the
+      # intel-tee-quote-verification-sys bindgen build.
+      - name: Install Intel DCAP quote verification library
+        run: |
+          curl -fsSL https://download.01.org/intel-sgx/sgx_repo/ubuntu/intel-sgx-deb.key \
+            | sudo gpg --dearmor -o /usr/share/keyrings/intel-sgx-archive-keyring.gpg
+          echo "deb [arch=amd64 signed-by=/usr/share/keyrings/intel-sgx-archive-keyring.gpg] https://download.01.org/intel-sgx/sgx_repo/ubuntu $(lsb_release -cs) main" \
+            | sudo tee /etc/apt/sources.list.d/intel-sgx.list
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            libsgx-dcap-quote-verify-dev libsgx-headers libclang-dev clang
+      - uses: jdx/mise-action@v4
+        with:
+          experimental: true
+          version: 2026.6.13
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: dcap-differ
+      - name: Clippy (dcap-differ)
+        run: cargo clippy --manifest-path dcap-differ/Cargo.toml --no-deps --all-targets -- -D warnings
+      - name: Differential test vs Intel QVL
+        run: mise test-dcap-differ
+      - name: Upload differ reports
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: differ-reports
+          path: dcap-differ/reports/
+          if-no-files-found: ignore
+
+  mutants:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v6
+      - uses: jdx/mise-action@v4
+        with:
+          experimental: true
+          version: 2026.6.13
+      - uses: Swatinem/rust-cache@v2
+      - uses: taiki-e/install-action@v2
+        with:
+          tool: cargo-mutants
+      # Policy: 0 missed — a surviving mutant is a security check that can be
+      # deleted without a test failing.
+      - name: Mutation testing
+        run: mise mutants
+      - name: Upload mutants report
+        if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: mutants-out
+          path: mutants.out
+
+  fuzz-smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v6
+      - uses: jdx/mise-action@v4
+        with:
+          experimental: true
+          version: 2026.6.13
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: dcap-verify/fuzz
+      - name: Install nightly toolchain
+        run: rustup toolchain install nightly --profile minimal
+      - uses: taiki-e/install-action@v2
+        with:
+          tool: cargo-fuzz
+      - name: Fuzz smoke (30s per target)
+        env:
+          FUZZ_SECS: "30"
+        run: mise fuzz-dcap
+      - name: Upload crash evidence
+        if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: fuzz-failures
+          if-no-files-found: ignore
+          path: |
+            dcap-verify/fuzz/target/*.failure.log
+            dcap-verify/fuzz/artifacts/

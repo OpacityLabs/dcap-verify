@@ -1,0 +1,5 @@
+{
+  "current_time_unix": 1783471500,
+  "verdict": "boundary",
+  "notes": "FAMILY F: unmodified prod-1 collateral at boundary 'tcbinfo-issuedate' (2026-07-08T00:45:00Z) eq -> t=2026-07-08T00:45:00Z. Probes <= vs < off-by-one between dcap window checks and QVL expiry model."
+}

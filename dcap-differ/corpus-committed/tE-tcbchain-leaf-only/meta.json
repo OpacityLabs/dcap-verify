@@ -1,0 +1,6 @@
+{
+  "current_time_unix": 1784171553,
+  "verdict": "reject",
+  "notes": "FAMILY E: tcb_info_issuer_chain with the Root CA dropped (leaf only). Probes whether the verifier anchors on a supplied root. EXPECTED dcap reject(root-ca-untrusted); QVL behaviour maps slot tolerance.",
+  "category": "root-ca-untrusted"
+}

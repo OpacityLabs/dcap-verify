@@ -1,0 +1,8 @@
+{
+  "case": "isv-signature-bitflip",
+  "current_time_unix": 1783549518,
+  "expected_mrenclave_hex": "20fba5d21433bb13534d63ee9cd13c674b4aafca42c5f4aa7348b4de2172baca",
+  "verdict": "reject",
+  "category": "quote-signature-invalid",
+  "notes": "One bit flipped in the ISV quote signature."
+}

@@ -1,0 +1,45 @@
+[package]
+name = "dcap-verify-fuzz"
+version = "0.0.0"
+publish = false
+edition = "2024"
+
+[package.metadata]
+cargo-fuzz = true
+
+[dependencies]
+libfuzzer-sys = "0.4"
+serde_json = "1"
+hex = "0.4"
+dcap-verify = { path = ".." }
+
+[[bin]]
+name = "quote_parse"
+path = "fuzz_targets/quote_parse.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "collateral_parse"
+path = "fuzz_targets/collateral_parse.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "verify_quote"
+path = "fuzz_targets/verify_quote.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "verify_collateral"
+path = "fuzz_targets/verify_collateral.rs"
+test = false
+doc = false
+bench = false
+
+[workspace]
+members = ["."]

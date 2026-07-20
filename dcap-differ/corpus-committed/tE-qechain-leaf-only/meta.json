@@ -1,0 +1,6 @@
+{
+  "current_time_unix": 1784171553,
+  "verdict": "reject",
+  "notes": "FAMILY E: qe_identity_issuer_chain with the Root CA dropped (leaf only). EXPECTED dcap reject(root-ca-untrusted); maps QE-chain slot tolerance.",
+  "category": "root-ca-untrusted"
+}

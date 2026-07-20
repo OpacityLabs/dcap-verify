@@ -1,0 +1,8 @@
+{
+  "case": "prod-1-wrong-mrenclave",
+  "current_time_unix": 1783549518,
+  "expected_mrenclave_hex": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  "verdict": "reject",
+  "category": "mrenclave-mismatch",
+  "notes": "Captured quote with a mismatched pinned MRENCLAVE."
+}

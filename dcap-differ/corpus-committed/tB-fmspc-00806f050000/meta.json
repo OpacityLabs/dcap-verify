@@ -1,0 +1,6 @@
+{
+  "current_time_unix": 1784171558,
+  "verdict": "reject",
+  "notes": "FAMILY B: genuine tcbInfo for FMSPC 00806f050000 spliced against the prod-1 quote (PCK FMSPC 00a067110000); time=2026-07-16T03:12:38Z. QVL hard-rejects (TCBINFO_MISMATCH). EXPECTED agree-reject; a dcap ACCEPT is DANGEROUS.",
+  "category": "tcb-level-unsupported"
+}

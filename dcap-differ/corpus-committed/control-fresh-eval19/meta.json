@@ -1,0 +1,13 @@
+{
+  "current_time_unix": 1784171553,
+  "verdict": "accept",
+  "notes": "SANITY CONTROL: fresh eval-19 tcbInfo + qe_identity (same fmspc/eval as the base), live proc+root CRL, spliced by this pipeline; time=2026-07-16T03:12:33Z. Unrecombined -> MUST be agree-accept.",
+  "tcb_standing": {
+    "configuration-and-sw-hardening-needed": {
+      "advisory_ids": [
+        "INTEL-SA-00289",
+        "INTEL-SA-00615"
+      ]
+    }
+  }
+}

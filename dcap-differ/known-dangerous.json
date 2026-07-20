@@ -1,0 +1,15 @@
+{
+  "_comment": "Recorded dangerous-polarity findings from FINDINGS.md. Passed to dcap-differ via --allow: a matched dangerous record counts as known-dangerous (CLEAN), an in-scope entry that stops firing counts as vanished (REVIEW). Update this file and FINDINGS.md together.",
+  "sweep": [
+    { "finding": "F1", "seed": "0xDCAF00000011", "iter": 11818 },
+    { "finding": "F1", "seed": "0xDCAF00000011", "iter": 17387 },
+    { "finding": "F2", "seed": "0xDCAF00000013", "iter": 23057 },
+    { "finding": "F3", "seed": "0xDCAF00000012", "iter": 35882 },
+    { "finding": "F3", "seed": "0xDCAF00000013", "iter": 21021 },
+    { "finding": "F3", "seed": "0xDCAF00000013", "iter": 36723 },
+    { "finding": "F3", "seed": "0xDCAF00000011", "iter": 48160 }
+  ],
+  "cases": [
+    { "finding": "F4", "case": "tE-tcbchain-root-twice" }
+  ]
+}

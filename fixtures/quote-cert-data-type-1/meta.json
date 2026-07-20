@@ -1,0 +1,8 @@
+{
+  "case": "quote-cert-data-type-1",
+  "current_time_unix": 1783549518,
+  "expected_mrenclave_hex": "20fba5d21433bb13534d63ee9cd13c674b4aafca42c5f4aa7348b4de2172baca",
+  "verdict": "reject",
+  "category": "quote-parse-error",
+  "notes": "Certification data type set to 1; only an embedded PCK chain (type 5) is in scope."
+}

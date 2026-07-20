@@ -1,0 +1,25 @@
+[package]
+name = "dcap-verify"
+version = "0.1.0"
+edition = "2024"
+license = "MIT"
+description = "Verifier for Intel SGX DCAP quote v3 attestations with PCS v4 collateral"
+repository = "https://github.com/OpacityLabs/dcap-verify"
+readme = "../README.md"
+keywords = ["sgx", "dcap", "attestation", "tee", "intel"]
+categories = ["cryptography", "authentication"]
+
+[dependencies]
+chrono = { workspace = true }
+hex = { workspace = true }
+p256 = { workspace = true }
+pem = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
+sha2 = { workspace = true }
+thiserror = { workspace = true }
+x509-parser = { workspace = true }
+
+[dev-dependencies]
+proptest = "1.9"
+rcgen = { workspace = true }

@@ -1,0 +1,23 @@
+min_version = "2026.6.13"
+
+[tools]
+bun = "latest"
+rust = "stable"
+"cargo:cargo-mutants" = "latest"
+"cargo:cargo-fuzz" = "latest"
+
+[settings]
+lockfile = true
+experimental = true
+
+[tasks]
+test = "cargo test"
+lint = "cargo clippy --workspace --no-deps --all-targets -- -D warnings"
+format = "cargo fmt --all"
+fix = "cargo clippy --workspace --no-deps --all-targets --fix --allow-dirty --allow-staged && cargo fmt --all"
+test-dcap-differ = "bun ./scripts/test-dcap-differ.mts"
+mutants = "bun ./scripts/mutants.mts"
+
+[tasks.fuzz-dcap]
+description = "Run the dcap-verify fuzz targets quietly, one summary line per target (FUZZ_SECS per target, default 60; FUZZ_TARGETS to run a subset)"
+run = "bun ./scripts/fuzz-dcap.mts"

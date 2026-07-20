@@ -1,0 +1,8 @@
+{
+  "case": "prod-1-time-far-future",
+  "current_time_unix": 2355682800,
+  "expected_mrenclave_hex": "a4d3f05eca05be04897074c5975c24cdfee969f8580a8a5380c69eb248f256f5",
+  "verdict": "reject",
+  "category": "cert-or-crl-time-invalid",
+  "notes": "Captured quote verified ~20 years later; certs stale."
+}

@@ -1,0 +1,6 @@
+{
+  "current_time_unix": 1784171553,
+  "verdict": "reject",
+  "notes": "FAMILY C: processor-CA pck_crl body with platform-CA issuer chain (half-swap). EXPECTED agree-reject; dcap ACCEPT is DANGEROUS.",
+  "category": "crl-invalid"
+}

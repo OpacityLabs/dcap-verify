@@ -1,0 +1,6 @@
+{
+  "current_time_unix": 1784171553,
+  "verdict": "reject",
+  "notes": "FAMILY C: platform-CA pck_crl + platform-CA issuer chain substituted for the processor-CA pair (quote PCK is Processor CA). EXPECTED agree-reject; a dcap ACCEPT is DANGEROUS (sibling-CA CRL substitution).",
+  "category": "crl-invalid"
+}

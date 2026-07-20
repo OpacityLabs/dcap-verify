@@ -1,0 +1,6 @@
+{
+  "current_time_unix": 1784171553,
+  "verdict": "reject",
+  "notes": "FAMILY D: root_ca_crl and pck_crl swapped with each other. EXPECTED agree-reject (dcap crl-invalid: issuer mismatch).",
+  "category": "crl-invalid"
+}

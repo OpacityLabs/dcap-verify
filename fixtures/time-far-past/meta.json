@@ -1,0 +1,8 @@
+{
+  "case": "time-far-past",
+  "current_time_unix": 1000000000,
+  "expected_mrenclave_hex": "20fba5d21433bb13534d63ee9cd13c674b4aafca42c5f4aa7348b4de2172baca",
+  "verdict": "reject",
+  "category": "cert-or-crl-time-invalid",
+  "notes": "Verification time in 2001, before any cert in the chain is valid."
+}

@@ -1,0 +1,6 @@
+{
+  "current_time_unix": 1784171553,
+  "verdict": "reject",
+  "notes": "FAMILY D: genuine TDX tcbInfo (id=TDX) spliced into the SGX tcb_info slot. EXPECTED agree-reject; a dcap ACCEPT is DANGEROUS.",
+  "category": "collateral-parse-error"
+}
