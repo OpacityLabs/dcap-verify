@@ -10,6 +10,7 @@ use sha2::{Digest, Sha256};
 use crate::TcbStanding;
 use crate::error::{ErrorCategory, VerifyError};
 use crate::pki::{self, CertChain, ChainKind};
+use crate::policy::TcbPolicy;
 use crate::tcb;
 use crate::types::collateral::SgxCollateral;
 use crate::types::quote::SgxQuote;
@@ -252,6 +253,29 @@ pub fn verify_remote_attestation(
     let standing = tcb::platform_standing(&tcb_info.body, &platform_tcb)?;
 
     Ok((standing, quote.report_body))
+}
+
+/// [`verify_remote_attestation`] plus a caller-owned [`TcbPolicy`] applied in
+/// one call: the policy's evaluation-round floor is forwarded to verification,
+/// and the returned standing must pass [`TcbPolicy::check`] (rejection carries
+/// the `tcb-standing-rejected` category). The accepted standing is still
+/// returned so callers can log or surface degraded-but-accepted states.
+pub fn verify_remote_attestation_with_policy(
+    current_time: SystemTime,
+    collateral: SgxCollateral,
+    quote: SgxQuote,
+    expected_mrenclave: &MREnclave,
+    policy: &TcbPolicy,
+) -> Result<(TcbStanding, SgxReportBody), VerifyError> {
+    let (standing, report_body) = verify_remote_attestation(
+        current_time,
+        collateral,
+        quote,
+        expected_mrenclave,
+        policy.min_tcb_evaluation_data_number,
+    )?;
+    policy.check(&standing)?;
+    Ok((standing, report_body))
 }
 
 /// Fail-closed document-format gates. Each field must be present

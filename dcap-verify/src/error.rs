@@ -5,6 +5,11 @@ use thiserror::Error;
 /// [`ErrorCategory::as_str`] arm), and raise it at the rejection site with
 /// [`VerifyError::new`]. There is no parallel variant list or category mapping
 /// to keep in sync, so a category can never be silently mis-mapped.
+///
+/// `#[non_exhaustive]`: the category set grows over time, so downstream
+/// matches must carry a wildcard arm — new categories are then additive, not
+/// breaking.
+#[non_exhaustive]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum ErrorCategory {
     QuoteParse,
@@ -22,6 +27,7 @@ pub enum ErrorCategory {
     CrlInvalid,
     RootCaUntrusted,
     TcbLevelUnsupported,
+    TcbStandingRejected,
     MrenclaveMismatch,
     DebugEnclaveRejected,
 }
@@ -47,6 +53,7 @@ impl ErrorCategory {
             Self::CrlInvalid => "crl-invalid",
             Self::RootCaUntrusted => "root-ca-untrusted",
             Self::TcbLevelUnsupported => "tcb-level-unsupported",
+            Self::TcbStandingRejected => "tcb-standing-rejected",
             Self::MrenclaveMismatch => "mrenclave-mismatch",
             Self::DebugEnclaveRejected => "debug-enclave-rejected",
         }
@@ -90,6 +97,10 @@ mod tests {
         assert_eq!(
             ErrorCategory::DebugEnclaveRejected.to_string(),
             "debug-enclave-rejected"
+        );
+        assert_eq!(
+            ErrorCategory::TcbStandingRejected.to_string(),
+            "tcb-standing-rejected"
         );
     }
 }

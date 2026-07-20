@@ -56,6 +56,12 @@ guard test is noted; the call-shape/report-body lock is `tests/regression.rs`):
 - `Signed<T>` keeps the raw JSON bytes of tcbInfo/enclaveIdentity — ECDSA
   signatures are verified over those verbatim bytes. **Never re-serialize
   signed collateral JSON anywhere** (crate, harnesses, or producers).
+- `TcbPolicy` (`src/policy.rs`) + `verify_remote_attestation_with_policy` —
+  stateless, caller-owned acceptance policy (floor + which degraded standings
+  to accept; `UpToDate` always accepted; rejection category
+  `tcb-standing-rejected`, pinned by `tests/policy.rs`). The crate carries the
+  policy *mechanism* only — values stay caller-owned, no global state, no
+  `Default`.
 
 The min-evaluation-number constant is **caller-owned**: callers pin a named
 constant and bump it per Intel TCB-recovery round; passing 0 disables the

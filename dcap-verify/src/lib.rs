@@ -4,6 +4,7 @@ pub mod error;
 pub mod types;
 
 mod pki;
+mod policy;
 #[cfg(test)]
 mod synthetic_e2e;
 mod tcb;
@@ -12,10 +13,11 @@ mod verify;
 use serde::{Deserialize, Serialize};
 
 pub use error::{ErrorCategory, VerifyError};
+pub use policy::TcbPolicy;
 pub use types::collateral::SgxCollateral;
 pub use types::quote::{SgxQuote, peek_mrenclave, peek_report_data};
 pub use types::report::{MREnclave, SgxReportBody};
-pub use verify::verify_remote_attestation;
+pub use verify::{verify_remote_attestation, verify_remote_attestation_with_policy};
 
 /// The platform's true TCB status, as read from the selected TCB level — not a
 /// policy verdict. The library returns this only for statuses it accepts; the
