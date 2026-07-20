@@ -30,6 +30,12 @@ verify_remote_attestation(current_time, collateral, quote, expected_mrenclave,
   endpoint, and the `eval_standing` example prints the standing a given
   quote + collateral pair would get before you raise the floor. Only raise it
   once the collateral your deployment serves is at (or above) that round.
+- `TcbPolicy` is an optional caller-owned policy value: the evaluation-round
+  floor plus which degraded standings to accept. Plain data — construct it
+  yourself; no global state, no `Default`.
+  `verify_remote_attestation_with_policy` runs verification and the policy
+  check in one call; a standing the policy refuses rejects with the
+  `tcb-standing-rejected` category.
 - Rejections are a `VerifyError { category, detail }`; `ErrorCategory` slugs
   are stable and machine-checkable (the fixture oracle asserts on them).
 - `peek_mrenclave` / `peek_report_data` read fields from raw quote bytes
