@@ -53,6 +53,12 @@ guard test is noted; the call-shape/report-body lock is `tests/regression.rs`):
 - `peek_mrenclave` / `peek_report_data` — fixed-offset borrows from raw quote
   bytes **without verification**; offset/parser agreement is pinned by
   `tests/peek.rs`.
+- `pck_collateral_params(&SgxQuote) -> ([u8; 6], PckCa)` (`src/pki.rs`) — the
+  FMSPC + issuing PCK CA read from the quote-embedded PCK chain, the two
+  selectors a PCS v4 collateral fetch needs (`tcb?fmspc=`, `pckcrl?ca=` via
+  `PckCa::as_str()`). Same peek semantics: nothing verified, use only to
+  choose what to fetch. Wire strings locked in `tests/regression.rs`;
+  quote-vs-collateral FMSPC agreement pinned in `tests/peek.rs`.
 - `Signed<T>` keeps the raw JSON bytes of tcbInfo/enclaveIdentity — ECDSA
   signatures are verified over those verbatim bytes. **Never re-serialize
   signed collateral JSON anywhere** (crate, harnesses, or producers).
