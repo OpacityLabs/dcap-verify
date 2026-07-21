@@ -36,7 +36,9 @@ or the differ.
   guards: entry-point signature and report-body fields
   (`dcap-verify/tests/regression.rs`), `TcbStanding` serde tags and
   `ErrorCategory` slugs (the fixture oracle, `tests/fixtures.rs`), peek
-  helpers (`tests/peek.rs`).
+  helpers (`tests/peek.rs`), and the collateral-selection helper
+  (`pck_collateral_params` / `PckCa` wire strings — surface lock in
+  `tests/regression.rs`, quote-vs-collateral cross-check in `tests/peek.rs`).
 - **Never hand-edit fixture files** — edit `fixtures/tools/derive_fixtures.py`
   and regenerate, or recapture (base or splice; capture tools need network).
   Fixture assertions use error-category slugs, never message text. See

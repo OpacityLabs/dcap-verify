@@ -2,7 +2,10 @@ mod common;
 
 use common::{category_of, load_case};
 use dcap_verify::types::report::MREnclave;
-use dcap_verify::{ErrorCategory, SgxCollateral, SgxQuote, TcbStanding, verify_remote_attestation};
+use dcap_verify::{
+    ErrorCategory, PckCa, SgxCollateral, SgxQuote, TcbStanding, pck_collateral_params,
+    verify_remote_attestation,
+};
 use serde_json::json;
 
 fn last_cert_block(chain_pem: &str) -> String {
@@ -106,4 +109,22 @@ fn tcb_standing_serde_tags_are_stable() {
             serde_json::from_value(got).expect("TcbStanding round-trips from its own JSON");
         assert_eq!(back, standing);
     }
+}
+
+/// Locks the collateral-selection helper surface downstream fetchers rely on:
+/// the `([u8; 6], PckCa)` return shape and the PCS v4 `pckcrl?ca=` wire
+/// strings. The FMSPC value is cross-checked against the signed collateral in
+/// the peek suite; here only the shape and the wire strings are pinned.
+#[test]
+fn pck_collateral_params_surface_is_stable() {
+    let case = load_case("prod-1");
+    let mut cursor: &[u8] = &case.quote_bytes;
+    let quote = SgxQuote::read(&mut cursor).expect("prod-1 quote parses");
+
+    let (fmspc, ca): ([u8; 6], PckCa) =
+        pck_collateral_params(&quote).expect("prod-1 selectors readable");
+    assert_eq!(fmspc.len(), 6);
+    assert_eq!(ca, PckCa::Processor);
+    assert_eq!(ca.as_str(), "processor");
+    assert_eq!(PckCa::Platform.as_str(), "platform");
 }

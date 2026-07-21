@@ -13,6 +13,7 @@ mod verify;
 use serde::{Deserialize, Serialize};
 
 pub use error::{ErrorCategory, VerifyError};
+pub use pki::{PckCa, pck_collateral_params};
 pub use policy::TcbPolicy;
 pub use types::collateral::SgxCollateral;
 pub use types::quote::{SgxQuote, peek_mrenclave, peek_report_data};

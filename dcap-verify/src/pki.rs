@@ -8,6 +8,7 @@ use x509_parser::oid_registry::{
 use x509_parser::prelude::*;
 
 use crate::error::{ErrorCategory, VerifyError};
+use crate::types::quote::SgxQuote;
 
 pub(crate) const INTEL_QE_VENDOR_ID: [u8; 16] = [
     0x93, 0x9a, 0x72, 0x33, 0xf7, 0x9c, 0x4c, 0xa9, 0x94, 0x0a, 0x0d, 0xb3, 0x95, 0x7f, 0x06, 0x07,
@@ -686,6 +687,60 @@ pub(crate) fn extract_pck_platform_tcb(chain: &ParsedChain) -> Result<PckPlatfor
     })
 }
 
+/// Which sibling Intel SGX PCK CA issued a quote's PCK leaf certificate.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+pub enum PckCa {
+    Processor,
+    Platform,
+}
+
+impl PckCa {
+    /// The `ca` parameter value PCS v4 expects in `pckcrl?ca=`.
+    pub fn as_str(self) -> &'static str {
+        match self {
+            Self::Processor => "processor",
+            Self::Platform => "platform",
+        }
+    }
+}
+
+const PCK_PROCESSOR_CA_CN: &str = "Intel SGX PCK Processor CA";
+const PCK_PLATFORM_CA_CN: &str = "Intel SGX PCK Platform CA";
+
+/// Read the FMSPC and issuing PCK CA out of the PCK chain embedded in a parsed
+/// quote — the two selectors a PCS v4 collateral fetch needs (`tcb?fmspc=`,
+/// `pckcrl?ca=`). Peek semantics, like [`crate::peek_mrenclave`]: nothing about
+/// the chain is verified here, so use the values only to choose which
+/// collateral to fetch, never as an authenticated fact.
+pub fn pck_collateral_params(quote: &SgxQuote) -> Result<([u8; 6], PckCa), VerifyError> {
+    let chain = CertChain::from_pem(ChainKind::QuotePck, &quote.signature.cert_data)?;
+    let parsed = chain.parse()?;
+    let fmspc = extract_pck_platform_tcb(&parsed)?.fmspc;
+    let issuer_cn = parsed
+        .leaf()
+        .issuer()
+        .iter_common_name()
+        .next()
+        .and_then(|attr| attr.as_str().ok())
+        .ok_or_else(|| {
+            VerifyError::new(
+                ErrorCategory::QuoteParse,
+                "PCK leaf issuer has no readable common name".to_string(),
+            )
+        })?;
+    let pck_ca = match issuer_cn {
+        PCK_PROCESSOR_CA_CN => PckCa::Processor,
+        PCK_PLATFORM_CA_CN => PckCa::Platform,
+        other => {
+            return Err(VerifyError::new(
+                ErrorCategory::QuoteParse,
+                format!("PCK leaf issuer CN '{other}' is not an Intel SGX PCK CA"),
+            ));
+        }
+    };
+    Ok((fmspc, pck_ca))
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -693,8 +748,9 @@ mod tests {
     use std::path::Path;
 
     use rcgen::{
-        BasicConstraints, CertificateParams, CertificateRevocationListParams, DnType, IsCa, Issuer,
-        KeyIdMethod, KeyPair, KeyUsagePurpose, RevokedCertParams, SerialNumber, date_time_ymd,
+        BasicConstraints, CertificateParams, CertificateRevocationListParams, CustomExtension,
+        DnType, IsCa, Issuer, KeyIdMethod, KeyPair, KeyUsagePurpose, RevokedCertParams,
+        SerialNumber, date_time_ymd,
     };
 
     fn prod1_collateral() -> serde_json::Value {
@@ -1157,5 +1213,96 @@ mod tests {
         assert_eq!(trim_trailing_junk(b"\0\n"), b"");
         assert_eq!(trim_trailing_junk(b""), b"");
         assert_eq!(trim_trailing_junk(b"\0abc"), b"\0abc");
+    }
+
+    fn prod1_quote() -> SgxQuote {
+        let path = Path::new(env!("CARGO_MANIFEST_DIR")).join("../fixtures/prod-1/quote.bin");
+        let bytes = fs::read(path).expect("quote.bin");
+        let mut cursor: &[u8] = &bytes;
+        SgxQuote::read(&mut cursor).expect("prod-1 quote parses")
+    }
+
+    fn prod1_pck_platform_tcb() -> PckPlatformTcb {
+        let quote = prod1_quote();
+        let chain =
+            CertChain::from_pem(ChainKind::QuotePck, &quote.signature.cert_data).expect("chain");
+        let parsed = chain.parse().expect("parsed chain");
+        extract_pck_platform_tcb(&parsed).expect("platform TCB")
+    }
+
+    // A synthetic single-cert PCK chain whose leaf carries prod-1's genuine SGX
+    // platform extension (so FMSPC extraction succeeds) but is issued by a CA
+    // with the given DN — the only way to reach the Platform and unknown-CN
+    // arms, which no Intel-issued chain exercises.
+    fn quote_with_pck_issuer(issuer_cn: Option<&str>) -> SgxQuote {
+        let mut quote = prod1_quote();
+        let ext_value = {
+            let chain = CertChain::from_pem(ChainKind::QuotePck, &quote.signature.cert_data)
+                .expect("chain");
+            let parsed = chain.parse().expect("parsed chain");
+            parsed
+                .leaf()
+                .extensions()
+                .iter()
+                .find(|e| e.oid.to_id_string() == SGX_PCK_EXTENSION_OID)
+                .expect("prod-1 PCK leaf carries the SGX extension")
+                .value
+                .to_vec()
+        };
+
+        let ca_key = KeyPair::generate().expect("ca key");
+        let mut ca = CertificateParams::new(Vec::<String>::new()).expect("ca params");
+        match issuer_cn {
+            Some(cn) => ca.distinguished_name.push(DnType::CommonName, cn),
+            None => ca
+                .distinguished_name
+                .push(DnType::OrganizationName, "no common name"),
+        }
+        ca.is_ca = IsCa::Ca(BasicConstraints::Unconstrained);
+        ca.key_usages = vec![KeyUsagePurpose::KeyCertSign];
+        let issuer = Issuer::new(ca, ca_key);
+
+        let leaf_key = KeyPair::generate().expect("leaf key");
+        let mut leaf = CertificateParams::new(Vec::<String>::new()).expect("leaf params");
+        leaf.distinguished_name
+            .push(DnType::CommonName, "synthetic PCK leaf");
+        leaf.custom_extensions = vec![CustomExtension::from_oid_content(
+            &[1, 2, 840, 113741, 1, 13, 1],
+            ext_value,
+        )];
+        let leaf_der = leaf
+            .signed_by(&leaf_key, &issuer)
+            .expect("leaf cert")
+            .der()
+            .to_vec();
+
+        quote.signature.cert_data =
+            ::pem::encode(&::pem::Pem::new("CERTIFICATE", leaf_der)).into_bytes();
+        quote
+    }
+
+    #[test]
+    fn pck_collateral_params_reads_platform_ca() {
+        let quote = quote_with_pck_issuer(Some(PCK_PLATFORM_CA_CN));
+        let (fmspc, ca) = pck_collateral_params(&quote).expect("platform chain");
+        assert_eq!(ca, PckCa::Platform);
+        assert_eq!(fmspc, prod1_pck_platform_tcb().fmspc);
+    }
+
+    #[test]
+    fn pck_collateral_params_rejects_unknown_issuer_cn() {
+        let quote = quote_with_pck_issuer(Some("Intel SGX PCK Imposter CA"));
+        let err = pck_collateral_params(&quote)
+            .expect_err("an unknown issuer CN must not map to a PCK CA");
+        assert_eq!(err.category, ErrorCategory::QuoteParse);
+        assert!(err.detail.contains("Imposter"), "{}", err.detail);
+    }
+
+    #[test]
+    fn pck_collateral_params_rejects_issuer_without_common_name() {
+        let quote = quote_with_pck_issuer(None);
+        let err = pck_collateral_params(&quote)
+            .expect_err("an issuer without a common name must be rejected");
+        assert_eq!(err.category, ErrorCategory::QuoteParse);
     }
 }
