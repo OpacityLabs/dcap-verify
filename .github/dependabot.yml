@@ -1,0 +1,14 @@
+version: 2
+updates:
+  - package-ecosystem: "cargo"
+    directory: "/"
+    schedule:
+      interval: "daily"
+  - package-ecosystem: "cargo"
+    directory: "/dcap-differ"
+    schedule:
+      interval: "daily"
+  - package-ecosystem: "cargo"
+    directory: "/dcap-verify/fuzz"
+    schedule:
+      interval: "daily"
