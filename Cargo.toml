@@ -6,7 +6,7 @@ exclude = ["dcap-verify/fuzz", "dcap-differ"]
 [workspace.dependencies]
 chrono = { version = "0.4.44", features = ["serde"] }
 hex = { version = "0.4.3", features = ["alloc", "serde"] }
-p256 = "0.13.2"
+p256 = "0.14.0"
 pem = "3.0.6"
 rcgen = "0.14.8"
 serde = { version = "1.0.228", features = ["derive"] }
