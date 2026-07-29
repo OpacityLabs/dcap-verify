@@ -7,7 +7,7 @@ exclude = ["dcap-verify/fuzz", "dcap-differ"]
 chrono = { version = "0.4.44", features = ["serde"] }
 hex = { version = "0.4.3", features = ["alloc", "serde"] }
 p256 = "0.13.2"
-pem = "3.0.6"
+pem = "4.0.0"
 rcgen = "0.14.8"
 serde = { version = "1.0.228", features = ["derive"] }
 serde_json = { version = "1.0.150", features = ["raw_value", "preserve_order"] }
