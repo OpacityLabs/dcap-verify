@@ -168,13 +168,15 @@ fn calibrate_cmd(args: &[String]) {
                 crl_form,
             };
             let outcome = match build_quote_collateral(&raw, cfg) {
-                Ok(collateral) => match tee_verify_quote(
-                    &quote,
-                    Some(&collateral),
-                    meta.current_time_unix,
-                    None,
-                    None,
-                ) {
+                Ok(collateral) => match unsafe {
+                    tee_verify_quote(
+                        &quote,
+                        Some(&collateral),
+                        meta.current_time_unix,
+                        None,
+                        None,
+                    )
+                } {
                     Ok((exp_status, result)) => {
                         if result
                             == sgx_ql_qv_result_t::SGX_QL_QV_RESULT_CONFIG_AND_SW_HARDENING_NEEDED
