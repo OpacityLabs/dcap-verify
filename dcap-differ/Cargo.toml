@@ -8,10 +8,10 @@ description = "Differential-testing harness: dcap-verify vs Intel QVL"
 
 [dependencies]
 dcap-verify = { path = "../dcap-verify" }
-intel-tee-quote-verification-rs = "0.3.0"
-serde = { version = "1", features = ["derive"] }
-serde_json = { version = "1", features = ["raw_value"] }
-pem = "3"
+intel-tee-quote-verification-rs = "0.4.0"
+serde = { version = "1.0.229", features = ["derive"] }
+serde_json = { version = "1.0.151", features = ["raw_value"] }
+pem = "4.0.0"
 
 [workspace]
 members = ["."]

@@ -265,7 +265,7 @@ pub fn run_qvl(
         Ok(c) => c,
         Err(e) => return QvlOutcome::NotRun(format!("marshal-failed: {e}")),
     };
-    match tee_verify_quote(quote_bytes, Some(&collateral), current_time, None, None) {
+    match unsafe { tee_verify_quote(quote_bytes, Some(&collateral), current_time, None, None) } {
         Ok((exp_status, result)) => QvlOutcome::Verdict { exp_status, result },
         Err(code) => QvlOutcome::Error(code),
     }
