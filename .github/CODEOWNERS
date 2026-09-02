@@ -2,9 +2,12 @@
 #
 # The org ruleset on `main` requires an approving review from a code owner.
 # Listed accounts must have write access or GitHub silently ignores them.
-# An approval from ANY one listed owner satisfies the requirement, and an
-# author cannot approve their own pull request.
-# Single-author repository (Change Management Plan Appendix A).
-# The named owner is the designated second reviewer, not the author.
+#
+# Both the maintainer and the designated reviewer are listed. An approval
+# from either one satisfies the requirement, and GitHub never lets an author
+# approve their own pull request — so a change opened by the maintainer still
+# needs the reviewer, a change opened by the reviewer still needs the
+# maintainer, and a change opened by anyone else can be unblocked by either.
+# This is a single-author repository under Change Management Plan Appendix A.
 
-*                       @oscar-opacity
+*                       @steve-opacity @oscar-opacity
